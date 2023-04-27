@@ -87,6 +87,8 @@ app.get('/restaurants',(req,res) => {
  })
  
 
+//http://localhost:9500/mealType
+
  app.get('/mealType',(req,res) => {
     db.collection('mealType').find().toArray((err,result) => {
         if(err) throw err;
