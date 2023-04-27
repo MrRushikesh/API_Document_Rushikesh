@@ -18,8 +18,10 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))
 
 app.get('/',(req,res) => {
-    res.send('<h1>Hii From Express</h1>')
+    res.send('<h1>Hii From Express.js</h1>')
 })
+
+// http://localhost:9500/location
 
 app.get('/location',(req,res) => {
    db.collection('location').find().toArray((err,result) => {
@@ -27,6 +29,13 @@ app.get('/location',(req,res) => {
        res.send(result)
    })
 })
+
+
+//http://localhost:9500/restaurants
+//http://localhost:9500/restaurants?stateId=3
+//http://localhost:9500/restaurants?mealId=4&stateId=3
+//http://localhost:9500/restaurants?mealId=3
+
 
 app.get('/restaurants',(req,res) => {
     let stateId = Number(req.query.stateId)
@@ -44,6 +53,10 @@ app.get('/restaurants',(req,res) => {
         res.send(result)
     })
  })
+
+ //http://localhost:9500/filters/1?cuisineId=4
+ //http://localhost:9500/filters/1?lcost=100&hcost=500
+ //http://localhost:9500/filters/1?lcost=100&hcost=500&sort=-1
 
  app.get('/filters/:mealId',(req,res) => {
      let query = {};
@@ -81,6 +94,7 @@ app.get('/restaurants',(req,res) => {
     })
  })
 
+//http://localhost:9500/details/10
 
 app.get('/details/:restId',(req,res) => {
     let id = Number(req.params.restId)
@@ -91,6 +105,8 @@ app.get('/details/:restId',(req,res) => {
 })
 
 
+//http://localhost:9500/menu/10
+
 app.get('/menu/:restId',(req,res) => {
     let id = Number(req.params.restId)
     db.collection('menu').find({restaurant_id:id}).toArray((err,result) => {
@@ -99,7 +115,15 @@ app.get('/menu/:restId',(req,res) => {
     })
 })
 
-//Menu user selected
+
+
+//Menu user selected -:
+
+//http://localhost:9500/menuItem
+// {
+// 	"id":[1,2,3]
+// }
+
 app.post('/menuItem',(req,res) => {
     if(Array.isArray(req.body.id)){
         db.collection('menu').find({menu_id:{$in:req.body.id}}).toArray((err,result) => {
@@ -111,12 +135,32 @@ app.post('/menuItem',(req,res) => {
     }
 })
 
+//Place Order API -: 
+
+// http://localhost:9500/placeOrder
+// {
+// 	"orderId" : 3,
+// 	"name" : "Rushikesh",
+// 	"email" : "rushi@gmail.com",
+// 	"address" : "Hom 65",
+// 	"phone" : 7447640893,
+// 	"cost" : 391,
+// 	"menuItem" : [
+// 		3,65,12
+// 	]
+// }
+
 app.post('/placeOrder',(req,res) => {
     db.collection('orders').insert(req.body,(err,result) => {
         if(err) throw err;
         res.send('Order Placed')
     })
 })
+
+//View Order -: 
+
+//http://localhost:9500/viewOrder
+//http://localhost:9500/viewOrder?email=rushi@gmail.com //With respect to mail id
 
 app.get('/viewOrder',(req,res) => {
     let email = req.query.email;
@@ -133,7 +177,16 @@ app.get('/viewOrder',(req,res) => {
 })
 
 
-//Update order
+//Update order -:
+
+// http://localhost:9500/updateOrder/1
+
+// {
+// 	"status":"Delivered",
+// 	"bank_name":"HDFC Bank",
+// 	"date":"07/01/2023"
+// }
+
 app.put('/updateOrder/:id',(req,res) => {
     let oid = Number(req.params.id);
     db.collection('orders').updateOne(
@@ -151,7 +204,10 @@ app.put('/updateOrder/:id',(req,res) => {
     )
 })
 
-//Delete order
+//Delete order -:
+
+//http://localhost:9500/deleteOrder/63a854090e78b8c74289445c
+
 app.delete('/deleteOrder/:id',(req,res) => {
     let _id = mongo.ObjectId(req.params.id);
     db.collection('orders').remove({_id},(err,result) => {
