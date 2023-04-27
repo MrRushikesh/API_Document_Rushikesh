@@ -9,7 +9,9 @@ const User = require('../model/userModel');
 router.use(bodyParser.urlencoded({extended:true}))
 router.use(bodyParser.json())
 
-//Get All user
+//Get All user -:
+//http://localhost:5000/api/auth/users
+
 router.get('/users',(req,res) => {
     User.find({},(err,data) => {
         if(err) throw err;
@@ -17,7 +19,9 @@ router.get('/users',(req,res) => {
     })
 })
 
-//Register user
+//Register user -: 
+//http://localhost:5000/api/auth/register 
+
 router.post('/register',(req,res) => {
     let hashpassword = bcrypt.hashSync(req.body.password, 8);
     User.create({
@@ -32,7 +36,9 @@ router.post('/register',(req,res) => {
     })
 })
 
-//LoginUser
+//LoginUser -: 
+//http://localhost:5000/api/auth/login 
+
 router.post('/login',(req,res) => {
     User.findOne({email:req.body.email},(err,user) => {
         if(err) res.send({auth:false,token:'Error while login'})
@@ -47,7 +53,9 @@ router.post('/login',(req,res) => {
     })
 })
 
-//UserInfo
+//UserInfo -:
+//http://localhost:5000/api/auth/userinfo
+
 router.get('/userInfo',(req,res) => {
     let token = req.headers['x-access-token'];
     if(!token) res.send({auth:false,token:'No Token Provided'})
